@@ -7,4 +7,14 @@ class Dish < ApplicationRecord
   has_many :recipes, through: :dish_recipes
 
   validates :name, presence: true
+
+  # Ransack associations
+  def self.ransackable_associations(_auth_object = nil)
+    %w[meal dish_ingredients ingredients dish_recipes recipes]
+  end
+
+  # Ransack attributes
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id name meal_id created_at updated_at]
+  end
 end
