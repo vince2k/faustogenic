@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_15_125248) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_19_125627) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -75,14 +75,30 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_15_125248) do
     t.index ["meal_id"], name: "index_dishes_on_meal_id"
   end
 
+  create_table "food_groups", force: :cascade do |t|
+    t.string "name"
+    t.string "ciqual_group_code"
+    t.bigint "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ciqual_group_code"], name: "index_food_groups_on_ciqual_group_code", unique: true
+  end
+
   create_table "ingredients", force: :cascade do |t|
     t.string "name"
+    t.decimal "fats", precision: 10, scale: 2, default: "0.0", null: false
     t.decimal "carbs", precision: 10, scale: 2, default: "0.0", null: false
     t.decimal "proteins", precision: 10, scale: 2, default: "0.0", null: false
-    t.decimal "fats", precision: 10, scale: 2, default: "0.0", null: false
     t.decimal "fibers", precision: 10, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "ciqual_code"
+    t.string "source"
+    t.decimal "energy_kcal", precision: 10, scale: 2, default: "0.0", null: false
+    t.decimal "sugars", precision: 10, scale: 2, default: "0.0", null: false
+    t.bigint "food_group_id"
+    t.decimal "ratio", precision: 10, scale: 2, default: "0.0", null: false
+    t.index ["ciqual_code"], name: "index_ingredients_on_ciqual_code", unique: true
   end
 
   create_table "meals", force: :cascade do |t|
@@ -128,6 +144,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_15_125248) do
   add_foreign_key "dish_recipes", "dishes"
   add_foreign_key "dish_recipes", "recipes"
   add_foreign_key "dishes", "meals"
+  add_foreign_key "food_groups", "food_groups", column: "parent_id"
+  add_foreign_key "ingredients", "food_groups"
   add_foreign_key "meals", "users"
   add_foreign_key "recipe_ingredients", "ingredients"
   add_foreign_key "recipe_ingredients", "recipes"

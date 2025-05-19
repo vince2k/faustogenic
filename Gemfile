@@ -53,7 +53,9 @@ gem "sassc-rails"
 
 gem "ostruct", require: false
 gem "activeadmin"
-
+gem 'nokogiri', '~> 1.16'
+gem "charlock_holmes"
+gem 'i18n'
 
 group :development, :test do
   gem "dotenv-rails"
