@@ -12,8 +12,8 @@ class Ingredient < ApplicationRecord
   validates :source, inclusion: { in: ['Manual', 'Ciqual', 'OpenFoodFacts'], allow_nil: true }
 
   # Callbacks pour calculer le keto_ratio automatiquement
-  before_create :set_ratio
-  before_update :update_ratio_if_needed
+  before_create :set_ratio, :set_energy_kcal
+  before_update :update_ratio_if_needed, :update_energy_kcal_if_needed
 
   # Constante pour le ratio maximum (quand proteins + carbs = 0 mais fats > 0)
   MAX_RATIO = 999.99
@@ -32,10 +32,11 @@ class Ingredient < ApplicationRecord
     (fats / denominator).round(2)
   end
 
-  # Mettre à jour le ratio cétogène
-  def update_ratio
-    self.ratio = calculate_ratio
-    save!
+  # Calculer l'apport calorique : (Lipides × 9) + (Protéines × 4) + (Glucides × 4)
+  def calculate_energy_kcal
+    return 0.0 if fats.nil? || proteins.nil? || carbs.nil?
+
+    (fats * 9 + proteins * 4 + carbs * 4).round(2)
   end
 
   # Formater les valeurs pour éviter la notation scientifique dans la console
@@ -82,10 +83,26 @@ private
     self.ratio = calculate_ratio
   end
 
+  # Callback avant création : calculer l'apport calorique si non défini
+  def set_energy_kcal
+    # Ne pas écraser energy_kcal si déjà défini (ex. : données Ciqual)
+    self.energy_kcal = calculate_energy_kcal if energy_kcal.nil? || energy_kcal.zero?
+  end
+
   # Callback avant mise à jour : recalculer le ratio si nécessaire
   def update_ratio_if_needed
     if fats_changed? || proteins_changed? || carbs_changed?
       self.ratio = calculate_keto_ratio
+    end
+  end
+
+  # Callback avant mise à jour : recalculer l'apport calorique si nécessaire
+  def update_energy_kcal_if_needed
+    if fats_changed? || proteins_changed? || carbs_changed?
+      # Ne recalculer que si energy_kcal n'est pas défini ou si la source est "Manual"
+      if energy_kcal.nil? || energy_kcal.zero? || source == "Manual"
+        self.energy_kcal = calculate_energy_kcal
+      end
     end
   end
 end
