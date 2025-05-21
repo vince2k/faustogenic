@@ -7,8 +7,14 @@ class User < ApplicationRecord
   has_many :meals, dependent: :destroy
   has_many :days, dependent: :destroy
 
+  has_one_attached :avatar
+
+  def display_name
+    nickname.presence || email
+  end
+
   # Ransack autorisation
   def self.ransackable_attributes(_auth_object = nil)
-    ["id", "email", "created_at", "updated_at"]
+    ["id", "email","nickname", "first_name", "last_name", "created_at", "updated_at"]
   end
 end

@@ -56,6 +56,9 @@ gem "activeadmin"
 gem 'nokogiri', '~> 1.16'
 gem "charlock_holmes"
 gem 'i18n'
+gem "cloudinary"
+gem "activestorage"
+
 
 group :development, :test do
   gem "dotenv-rails"
