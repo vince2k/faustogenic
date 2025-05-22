@@ -1,0 +1,20 @@
+<%= turbo_stream.append "meal_#{@meal.id}_dishes" do %>
+  <h3><%= @dish.name || "Plat ##{@dish.id}" %></h3>
+
+  <%= turbo_frame_tag "dish_#{@dish.id}_form" do %>
+    <%= render partial: "dish_ingredients/form", locals: { dish: @dish } %>
+  <% end %>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ingrédient</th>
+        <th>Quantité</th>
+        <th colspan="6">Valeurs nutritionnelles</th>
+      </tr>
+    </thead>
+    <tbody id="dish_<%= @dish.id %>_table">
+      <!-- vide au départ -->
+    </tbody>
+  </table>
+<% end %>

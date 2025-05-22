@@ -1,0 +1,13 @@
+<h1>Nouvelle journée</h1>
+
+<%= form_with(model: @day, local: true) do |f| %>
+  <div>
+    <%= f.label :date, "Date du jour" %>
+    <%= f.date_field :date %>
+  </div>
+
+  <div>
+    <%= f.submit "Créer la journée" %>
+  </div>
+<% end %>
+<%= link_to 'Retour', days_path, class:'btn btn-primary' %>

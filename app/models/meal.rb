@@ -1,5 +1,6 @@
 class Meal < ApplicationRecord
   belongs_to :user
+  belongs_to :day
   has_many :dishes, dependent: :destroy
 
   # Ransack associations

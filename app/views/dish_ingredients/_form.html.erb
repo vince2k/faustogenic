@@ -1,0 +1,28 @@
+<%# app/views/dish_ingredients/_form.html.erb %>
+<%= form_with(model: DishIngredient.new, url: dish_ingredients_path, data: { turbo_frame: "_top" }) do |f| %>
+  <%= f.hidden_field :dish_id, value: dish.id %>
+
+  <div data-controller="ingredient-autocomplete">
+    <%= label_tag :ingredient_name, "Ingrédient" %>
+    <%= text_field_tag :ingredient_name, "", data: {
+        ingredient_autocomplete_target: "input",
+        autocomplete_url: api_v1_ingredients_autocomplete_path,
+        action: "input->ingredient-autocomplete#search"
+      }, class: "border p-1 w-full", autocomplete: "off" %>
+
+    <%= hidden_field_tag "dish_ingredient[ingredient_id]", "", data: {
+        ingredient_autocomplete_target: "hidden"
+      } %>
+
+    <ul data-ingredient-autocomplete-target="list" class="border bg-white absolute z-10 w-full max-h-48 overflow-auto"></ul>
+  </div>
+
+  <div>
+    <%= f.label :quantity, "Quantité (g)" %>
+    <%= f.number_field :quantity, step: 0.1, class: "border p-1 w-full" %>
+  </div>
+
+  <div class="mt-2">
+    <%= f.submit "Ajouter", class: "px-4 py-1 bg-blue-600 text-white rounded" %>
+  </div>
+<% end %>

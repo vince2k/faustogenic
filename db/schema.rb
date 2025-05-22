@@ -10,9 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_21_085941) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_22_133128) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
+  enable_extension "unaccent"
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -127,6 +129,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_21_085941) do
     t.bigint "food_group_id"
     t.decimal "ratio", precision: 10, scale: 2, default: "0.0", null: false
     t.index ["ciqual_code"], name: "index_ingredients_on_ciqual_code", unique: true
+    t.index ["name"], name: "index_ingredients_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "meals", force: :cascade do |t|
@@ -134,6 +137,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_21_085941) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "day_id", null: false
+    t.index ["day_id"], name: "index_meals_on_day_id"
     t.index ["user_id"], name: "index_meals_on_user_id"
   end
 
@@ -179,6 +184,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_21_085941) do
   add_foreign_key "dishes", "meals"
   add_foreign_key "food_groups", "food_groups", column: "parent_id"
   add_foreign_key "ingredients", "food_groups"
+  add_foreign_key "meals", "days"
   add_foreign_key "meals", "users"
   add_foreign_key "recipe_ingredients", "ingredients"
   add_foreign_key "recipe_ingredients", "recipes"

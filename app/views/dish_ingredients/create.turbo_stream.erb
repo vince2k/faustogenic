@@ -1,0 +1,26 @@
+<%# app/views/dish_ingredients/create.turbo_stream.erb %>
+<%= turbo_stream.replace "dish_#{@dish_ingredient.dish_id}_form" do %>
+  <%= render partial: "dish_ingredients/form", locals: { dish: @dish_ingredient.dish } %>
+<% end %>
+
+<%= turbo_stream.append "dish_#{@dish_ingredient.dish_id}_table" do %>
+  <% i = @dish_ingredient.ingredient %>
+  <% q = @dish_ingredient.quantity %>
+  <% kcal = i.energy_kcal * q / 100 %>
+  <% fats = i.fats * q / 100 %>
+  <% proteins = i.proteins * q / 100 %>
+  <% carbs = i.carbs * q / 100 %>
+  <% fibers = i.fibers * q / 100 %>
+  <% ratio = carbs + proteins > 0 ? fats / (carbs + proteins) : 0 %>
+
+  <tr>
+    <td class="p-2"><%= i.name %></td>
+    <td class="p-2"><%= q %></td>
+    <td class="p-2"><%= kcal.round(1) %></td>
+    <td class="p-2"><%= fats.round(1) %></td>
+    <td class="p-2"><%= proteins.round(1) %></td>
+    <td class="p-2"><%= carbs.round(1) %></td>
+    <td class="p-2"><%= fibers.round(1) %></td>
+    <td class="p-2"><%= ratio.round(2) %></td>
+  </tr>
+<% end %>
