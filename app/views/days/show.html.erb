@@ -1,109 +1,45 @@
-<h1 class="text-3xl font-bold mb-6">Journée du <%= l(@day.date, format: :long) %></h1>
-
-<% total_kcal = 0; total_fats = 0; total_carbs = 0; total_proteins = 0; total_fibers = 0 %>
-
-<% @day.meals.each do |meal| %>
-  <div class="mb-10 border rounded-lg p-4 shadow">
-    <h2 class="text-2xl font-semibold mb-2"><%= meal.name || "Repas ##{meal.id}" %></h2>
-
-    <% meal_kcal = 0; meal_fats = 0; meal_carbs = 0; meal_proteins = 0; meal_fibers = 0 %>
-
-    <%= turbo_frame_tag "meal_#{meal.id}_dishes" do %>
-      <% if meal.dishes.any? %>
-        <% meal.dishes.each do |dish| %>
-          <div class="mb-6">
-            <h3 class="text-xl font-medium mb-2"><%= dish.name || "Plat ##{dish.id}" %></h3>
-
-            <%= turbo_frame_tag "dish_#{dish.id}_form" do %>
-              <%= render partial: "dish_ingredients/form", locals: { dish: dish } %>
-            <% end %>
-
-            <table class="w-full text-sm border mt-4 mb-2">
-              <thead>
-                <tr class="bg-gray-100 text-left">
-                  <th class="p-2">Ingrédients</th>
-                  <th class="p-2">Quantité (g)</th>
-                  <th class="p-2">Kcal</th>
-                  <th class="p-2">Lipides</th>
-                  <th class="p-2">Protéines</th>
-                  <th class="p-2">Glucides</th>
-                  <th class="p-2">Fibres</th>
-                  <th class="p-2">Ratio</th>
-                </tr>
-              </thead>
-              <tbody id="dish_<%= dish.id %>_table">
-                <% dish.dish_ingredients.each do |di| %>
-                  <% i = di.ingredient %>
-                  <% q = di.quantity %>
-                  <% kcal = i.energy_kcal * q / 100 %>
-                  <% fats = i.fats * q / 100 %>
-                  <% proteins = i.proteins * q / 100 %>
-                  <% carbs = i.carbs * q / 100 %>
-                  <% fibers = i.fibers * q / 100 %>
-                  <% ratio = carbs + proteins > 0 ? fats / (carbs + proteins) : 0 %>
-
-                  <% meal_kcal += kcal
-                     meal_fats += fats
-                     meal_proteins += proteins
-                     meal_carbs += carbs
-                     meal_fibers += fibers %>
-
-                  <tr class="border-t">
-                    <td class="p-2"><%= i.name %></td>
-                    <td class="p-2"><%= q %></td>
-                    <td class="p-2"><%= kcal.round(1) %></td>
-                    <td class="p-2"><%= fats.round(1) %></td>
-                    <td class="p-2"><%= proteins.round(1) %></td>
-                    <td class="p-2"><%= carbs.round(1) %></td>
-                    <td class="p-2"><%= fibers.round(1) %></td>
-                    <td class="p-2"><%= ratio.round(2) %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        <% end %>
-      <% else %>
-        <p class="italic text-gray-500">Aucun plat pour ce repas.</p>
-      <% end %>
-    <% end %>
-
-    <div class="text-sm text-gray-700 mb-4">
-      <strong>Total repas :</strong>
-      <%= meal_kcal.round(1) %> kcal — Lipides: <%= meal_fats.round(1) %>g —
-      Prot: <%= meal_proteins.round(1) %>g — Gluc: <%= meal_carbs.round(1) %>g —
-      Fibres: <%= meal_fibers.round(1) %>g —
-      Ratio: <%= (meal_carbs + meal_proteins > 0 ? meal_fats / (meal_carbs + meal_proteins) : 0).round(2) %>
-    </div>
-
-    <%= turbo_frame_tag "meal_#{meal.id}_add_dish" do %>
-      <%= form_with url: dishes_path, method: :post do |f| %>
-        <%= hidden_field_tag "dish[meal_id]", meal.id %>
-        <div class="flex gap-2">
-          <%= text_field_tag "dish[name]", "", placeholder: "Nom du plat", class: "border p-1 rounded w-full" %>
-          <%= f.submit "Ajouter", class: "bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700" %>
-        </div>
-      <% end %>
-    <% end %>
+<%# app/views/days/show.html.erb %>
+<div class="container">
+  <div class="summary-bar">
+    <h1 class="text-3xl font-bold mb-6">Journée du <%= l(@day.date, format: :long) %></h1>
+    <%# Résumé de la journée %>
+    <%= render partial: "days/summary", locals: { day: @day } %>
   </div>
 
-  <% total_kcal += meal_kcal
-     total_fats += meal_fats
-     total_proteins += meal_proteins
-     total_carbs += meal_carbs
-     total_fibers += meal_fibers %>
-<% end %>
 
-<hr class="my-6 border-t">
+  <% total_kcal = 0; total_fats = 0; total_carbs = 0; total_proteins = 0; total_fibers = 0 %>
 
-<div class="bg-gray-100 p-4 rounded shadow mt-4">
-  <h3 class="text-lg font-semibold mb-2">Total Journée</h3>
-  <p>
-    <strong><%= total_kcal.round(1) %> kcal</strong><br>
-    Lipides : <%= total_fats.round(1) %>g<br>
-    Protéines : <%= total_proteins.round(1) %>g<br>
-    Glucides : <%= total_carbs.round(1) %>g<br>
-    Fibres : <%= total_fibers.round(1) %>g<br>
-    Ratio : <%= (total_carbs + total_proteins > 0 ? total_fats / (total_carbs + total_proteins) : 0).round(2) %>
-  </p>
+  <%# Calcul des totaux par repas %>
+  <% @day.meals.each do |meal| %>
+    <div class="mb-10 border rounded-lg p-4 shadow bg-dark-50">
+      <h2 class="text-2xl font-semibold mb-2"><%= meal.name || "Repas ##{meal.id}" %></h2>
+
+      <% meal_kcal = 0; meal_fats = 0; meal_carbs = 0; meal_proteins = 0; meal_fibers = 0 %>
+
+      <%= turbo_frame_tag "meal_#{meal.id}_dishes" do %>
+        <% if meal.dishes.any? %>
+          <% meal.dishes.each do |dish| %>
+            <div class="mb-6">
+
+              <%# Tableau des ingrédients du plat %>
+              <%= render partial: "dishes/table", locals: { dish: dish } %>
+
+            </div>
+          <% end %>
+        <% else %>
+          <p class="italic text-gray-500">Aucun plat pour ce repas.</p>
+        <% end %>
+      <% end %>
+
+      <%# Résumé du repas %>
+      <%= render partial: "meals/summary", locals: { meal: meal } %>
+
+      <%# Formulaire d'ajout de plat %>
+      <%= render partial: "meals/form", locals: { meal: meal } %>
+    </div>
+
+  <% end %>
+
+  <hr class="my-6 border-t">
+
 </div>

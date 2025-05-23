@@ -1,8 +1,10 @@
 <h1>Days#index</h1>
 <p>Find me in app/views/days/index.html.erb</p>
 
+<%= link_to "Créer une journée", new_day_path, class:'btn btn-success' %>
+
 <% @days.each do |day| %>
-  <% totals = macros_for(day) %>
+  <% totals = day.macros %>
 
   <%= link_to day_path(day) do %>
     <div class="card">
@@ -17,4 +19,3 @@
     </div>
   <% end %>
 <% end %>
-

@@ -1,0 +1,19 @@
+<%# app/views/dish_ingredients/_row.html.erb %>
+<tr id="dish_ingredient_row_<%= dish_ingredient.id %>">
+  <td class="p-2"><%= dish_ingredient.ingredient.name %></td>
+  <td class="p-2">
+    <%= number_field_tag :quantity, dish_ingredient.quantity,
+      step: 0.1, min: 0, class: "w-20 p-1 border rounded",
+      data: {
+        controller: "quantity",
+        action: "change->quantity#update",
+        quantity_dish_ingredient_id_value: dish_ingredient.id
+      } %>
+  </td>
+  <td class="p-2"><%= dish_ingredient.kcal.round(1) %></td>
+  <td class="p-2"><%= dish_ingredient.fats.round(1) %></td>
+  <td class="p-2"><%= dish_ingredient.proteins.round(1) %></td>
+  <td class="p-2"><%= dish_ingredient.carbs.round(1) %></td>
+  <td class="p-2"><%= dish_ingredient.fibers.round(1) %></td>
+  <td class="p-2"><%= dish_ingredient.ratio.round(2) %></td>
+</tr>

@@ -1,0 +1,6 @@
+<%# app/views/dishes/_table_body.html.erb %>
+<tbody id="dish_<%= dish.id %>_table">
+  <% dish.dish_ingredients.each do |di| %>
+    <%= render partial: "dish_ingredients/row", locals: { dish_ingredient: di } %>
+  <% end %>
+</tbody>

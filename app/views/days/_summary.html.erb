@@ -1,0 +1,12 @@
+<%# app/views/days/_summary.html.erb %>
+<% m = day.macros %>
+
+<div id="day_<%= day.id %>_summary" class="text-sm text-gray-700 mb-4">
+  <strong>Total de la journée :</strong>
+  <%= m[:kcal].round(1) %> kcal —
+  Lipides: <%= m[:fats].round(1) %>g —
+  Prot: <%= m[:proteins].round(1) %>g —
+  Gluc: <%= m[:carbs].round(1) %>g —
+  Fibres: <%= m[:fibers].round(1) %>g —
+  Ratio: <%= m[:ratio].round(2) %>
+</div>

@@ -1,0 +1,10 @@
+<%# app/views/meals/_form.html.erb %>
+<%= turbo_frame_tag "meal_#{meal.id}_add_dish" do %>
+  <%= form_with url: dishes_path, method: :post do |f| %>
+    <%= hidden_field_tag "dish[meal_id]", meal.id %>
+    <div class="flex gap-2">
+      <%= text_field_tag "dish[name]", "", placeholder: "Nom du plat", class: "border p-1 rounded w-full" %>
+      <%= f.submit "Ajouter", class: "bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700" %>
+    </div>
+  <% end %>
+<% end %>

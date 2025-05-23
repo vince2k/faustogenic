@@ -1,0 +1,16 @@
+<%# app/views/dish_ingredients/update.turbo_stream.erb %>
+<%= turbo_stream.replace "dish_ingredient_row_#{@dish_ingredient.id}" do %>
+  <%= render partial: "dish_ingredients/row", locals: { dish_ingredient: @dish_ingredient } %>
+<% end %>
+
+<%= turbo_stream.replace "dish_#{@dish_ingredient.dish.id}_table" do %>
+  <%= render partial: "dishes/table_body", locals: { dish: @dish_ingredient.dish } %>
+<% end %>
+
+<%= turbo_stream.replace "meal_#{@dish_ingredient.dish.meal.id}_summary" do %>
+  <%= render partial: "meals/summary", locals: { meal: @dish_ingredient.dish.meal } %>
+<% end %>
+
+<%= turbo_stream.replace "day_#{@dish_ingredient.dish.meal.day.id}_summary" do %>
+  <%= render partial: "days/summary", locals: { day: @dish_ingredient.dish.meal.day } %>
+<% end %>

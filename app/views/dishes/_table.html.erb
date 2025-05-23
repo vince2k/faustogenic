@@ -1,0 +1,33 @@
+<%# app/views/dishes/_table.html.erb %>
+<div id="dish_<%= dish.id %>_container">
+  <div class="mb-6">
+    <h3 class="text-xl font-medium mb-2"><%= dish.name || "Plat ##{dish.id}" %></h3>
+    <table class="w-full text-sm border mt-4 mb-2">
+      <thead>
+        <tr class="bg-gray-100 text-left">
+          <th class="p-2">Ingrédients</th>
+          <th class="p-2">Quantité (g)</th>
+          <th class="p-2">Kcal</th>
+          <th class="p-2">Lipides</th>
+          <th class="p-2">Protéines</th>
+          <th class="p-2">Glucides</th>
+          <th class="p-2">Fibres</th>
+          <th class="p-2">Ratio</th>
+        </tr>
+      </thead>
+      <%= render partial: "dishes/table_body", locals: { dish: dish } %>
+      <tfoot>
+        <%= render partial: "dish_ingredients/form", locals: { dish: dish } %>
+        <tr class="bg-gray-50 font-semibold">
+          <td class="p-2" colspan="2">Total</td>
+          <td class="p-2"><%= dish.kcal.round(1) %></td>
+          <td class="p-2"><%= dish.fats.round(1) %></td>
+          <td class="p-2"><%= dish.proteins.round(1) %></td>
+          <td class="p-2"><%= dish.carbs.round(1) %></td>
+          <td class="p-2"><%= dish.fibers.round(1) %></td>
+          <td class="p-2"><%= dish.ratio.round(2) %></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<%# app/views/days/_dish_table.html.erb %>
+<% dish.dish_ingredients.each do |di| %>
+  <% i = di.ingredient %>
+  <% q = di.quantity %>
+  <% kcal = i.energy_kcal * q / 100 %>
+  <% fats = i.fats * q / 100 %>
+  <% proteins = i.proteins * q / 100 %>
+  <% carbs = i.carbs * q / 100 %>
+  <% fibers = i.fibers * q / 100 %>
+  <% ratio = carbs + proteins > 0 ? fats / (carbs + proteins) : 0 %>
+
+  <tr class="border-t">
+    <td class="p-2"><%= i.name %></td>
+    <td class="p-2">
+      <%= number_field_tag "quantity", q,
+          step: 1, min: 0,
+          class: "w-20 border p-1 rounded",
+          data: {
+            controller: "quantity",
+            action: "input->quantity#update",
+            quantity_dish_ingredient_id_value: di.id
+          } %>
+    </td>
+    <td class="p-2"><%= kcal.round(1) %></td>
+    <td class="p-2"><%= fats.round(1) %></td>
+    <td class="p-2"><%= proteins.round(1) %></td>
+    <td class="p-2"><%= carbs.round(1) %></td>
+    <td class="p-2"><%= fibers.round(1) %></td>
+    <td class="p-2"><%= ratio.round(2) %></td>
+  </tr>
+<% end %>

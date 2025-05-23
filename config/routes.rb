@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   resources :days
   resources :meals, only: [:new, :create, :show]
   resources :dishes, only: [:create]
-  resources :dish_ingredients, only: [:create]
+  resources :dish_ingredients, only: [:create, :edit, :update]
 
 
 
